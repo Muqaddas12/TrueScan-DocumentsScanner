@@ -1,14 +1,13 @@
-import { Alert } from "react-native"
-import * as ImagePicker from 'expo-image-picker'
+
+import { launchImageLibrary } from "react-native-image-picker"
 
 export const launchGallery=async ()=>{
-let result= await ImagePicker.launchImageLibraryAsync({
-    mediaTypes:['images'],
-    allowsEditing:true,
-    aspect:[4,3],
-    quality:1
-}) 
-console.log(result)
 
+const result=launchImageLibrary({
+    mediaType:['photo'],
+    quality:1,
+
+})
+console.log('result',result)
 }
 

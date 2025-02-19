@@ -1,12 +1,16 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, TouchableWithoutFeedback } from "react-native";
 import { launchGallery } from "../helpers/FooterHelper";
 const { width, height } = Dimensions.get('window');
+import { useDispatch, useSelector } from "react-redux";
+import { notVisible } from "../redux/store";
 
 const Options = () => {
+  const dispatch=useDispatch()
 
   return (
-    <View style={styles.optioncContainer}>
+ <TouchableWithoutFeedback onPress={()=>dispatch(notVisible())}>
+     <View style={styles.optioncContainer}>
     <View style={styles.optionsubContainer}>
     <View style={styles.header}>
             <Text style={styles.headerText}>Choose Photos From:</Text>
@@ -21,6 +25,7 @@ const Options = () => {
       </TouchableOpacity>
     </View>
     </View>
+ </TouchableWithoutFeedback>
   );
 };
 
@@ -31,18 +36,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
 width:width,
- 
-    borderRadius: 10,  // Rounded corners for a smooth look
-    borderWidth: 0.5,
-    borderColor: '#ccc',  // Light border color
-    elevation: 5,  // For shadow on Android
-    shadowColor: '#000',  // Shadow for iOS
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
     zIndex:1000,
     height:height,
-
   },
   optionsubContainer:{
 position:'absolute',

@@ -3,14 +3,16 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { launchGallery } from "../helpers/FooterHelper";
 import Options from "./Options";
-import { store, Visible } from "../redux/store";
-store.subscribe()
+import { useSelector,useDispatch } from "react-redux";
+import { Visible } from "../redux/store";
+
 const Footer = () => {
-    const [isVisible,setVisible]=useState(false)
+  const isVisible=useSelector((state)=>state.visibility.value)
+  const dispatch=useDispatch()
    
     return (
         <View style={styles.footerContainer}>
-            {isVisible?<Options/>:<TouchableOpacity onPress={()=>store.dispatch(Visible())}>
+            {isVisible?<Options/>:<TouchableOpacity onPress={()=>dispatch(Visible())}>
                 <Icon
                     style={styles.icon}
                     name="plus" />

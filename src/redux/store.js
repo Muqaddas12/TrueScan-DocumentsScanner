@@ -1,22 +1,26 @@
-import { createSlice,configureStore } from "@reduxjs/toolkit";
+import { createSlice, configureStore } from "@reduxjs/toolkit";
 
-const Visibility= createSlice({
-    name:'Visibility',
-    initialState:{
-        value:false
+const Visibility = createSlice({
+    name: "visibility", // lowercase name (recommended for state keys)
+    initialState: {
+        value: false
     },
-    reducers:{
-        Visible:state=>{
-            state.value=true
+    reducers: {
+        Visible: (state) => {
+            state.value = true;
         },
-        notVisible:state=>{
-            state.value=false
+        notVisible: (state) => {
+            state.value = false;
         }
     }
-})
+});
 
-export const {Visible,notVisible}= Visibility.actions
+// Export actions
+export const { Visible, notVisible } = Visibility.actions;
 
+// Create store
 export const store = configureStore({
-    reducer: Visibility.reducer
-})
+    reducer: {
+        visibility: Visibility.reducer
+    }
+});

@@ -2,6 +2,11 @@
   "expo": {
     "name": "DocScanner",
     "slug": "DocScanner",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "scheme": "docscanner",
+    "newArchEnabled": "true",
+    "plugins": [
+      "expo-router"
+    ]
   }
 }

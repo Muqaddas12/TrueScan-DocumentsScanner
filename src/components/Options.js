@@ -1,12 +1,29 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, TouchableWithoutFeedback } from "react-native";
-import { launchGallery } from "../helpers/FooterHelper";
+import ImagePicker from 'react-native-image-crop-picker'
+import { router } from 'expo-router'
 const { width, height } = Dimensions.get('window');
-import { useDispatch, useSelector } from "react-redux";
-import { notVisible } from "../redux/store";
+import { useDispatch } from "react-redux";
+import { notVisible, } from "../redux/store";
 
 const Options = () => {
   const dispatch=useDispatch()
+  const launchGallery=async () => {
+    
+const result=await ImagePicker.openPicker({
+  multiple:true,
+  mediaType:'photo',
+  cropping:true,
+
+})
+
+
+console.log(result)
+router.push({
+  pathname:'SelectedImages',
+  params:{data:JSON.stringify(result)}
+})
+  }
 
   return (
  <TouchableWithoutFeedback onPress={()=>dispatch(notVisible())}>

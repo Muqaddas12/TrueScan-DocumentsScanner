@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from 'react-native-vector-icons/AntDesign';
-import { launchGallery } from "../helpers/FooterHelper";
 import Options from "./Options";
 import { useSelector,useDispatch } from "react-redux";
 import { Visible } from "../redux/store";

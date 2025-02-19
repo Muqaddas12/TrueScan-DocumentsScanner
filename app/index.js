@@ -17,7 +17,7 @@ export default function Homepage() {
     <View style={styles.container} >
 <Navbar/>
       <StatusBar style="auto" />
-      <Text>hellow world</Text>
+      <Text>hello world</Text>
       <View style={styles.imageContainer}>
           
       </View>

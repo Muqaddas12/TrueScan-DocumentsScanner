@@ -1,0 +1,64 @@
+# 📄 Doc Scanner
+
+A robust **Document Scanner** built using **React Native** and **Expo Router**, designed to capture, process, and store documents efficiently. This application allows users to scan physical documents and convert them into digital copies and convert it into pdf
+
+## 📌 Features
+
+- 📷 **Document Scanning**: Capture images using the device's camera.
+- 🔎 **Image Processing**: Adjust contrast, brightness, and apply filters.
+- 🗂️ **Document Management**: Store and retrieve scanned documents.
+- 📤 **Export Options**: Share and save scanned files in PDF format.
+- 📱 **Cross-Platform**: Works on both Android and iOS.
+
+## 📚 Technologies Used
+
+- **React Native**: Core framework for building mobile applications.
+- **Expo Router**: Navigation solution for handling page routing.
+- **Image Manipulation**: For enhancing document quality.
+
+
+## 📦 Installation
+
+Ensure you have **Node.js** and **Expo CLI** installed.
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/doc-scanner.git
+cd doc-scanner
+
+# Install dependencies
+npm install
+
+# Start the development server
+npx expo start
+```
+
+## 🚀 Usage
+
+1. Open the app on your device (via Expo Go or a built APK/IPA).
+2. Use the camera to capture a document.
+3. Apply desired filters and enhancements.
+4. Save or share the processed document.
+
+## 🛠️ Configuration
+
+
+
+
+## 🤝 Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request.
+
+1. Fork the repository.
+2. Create a new branch.
+3. Make your changes and test thoroughly.
+4. Submit a pull request.
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+💌 **Have questions?** Reach out via Email:Tombshadow112@gmail.com
+

@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
         borderColor: 'green',
         alignItems: 'center',
         justifyContent: 'center',
+        left:'45%'
 
     },
     icon: {

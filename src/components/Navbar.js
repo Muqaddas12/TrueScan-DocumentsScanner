@@ -20,11 +20,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',  // Align logo and title in a row
     alignItems: 'center',  // Vertically center the items
     justifyContent: 'space-between',  // Add spacing between logo and title
-    backgroundColor: '#4CAF50',  // Navbar background color
+    backgroundColor: '#5e46b4',  // Navbar background color
     padding: 10,  // Padding for the navbar
     position:'absolute',
-    top:10,
     width:width,
+    zIndex:1000,
   },
   logo: {
     width: 40,  // Adjust size of the logo

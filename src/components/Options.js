@@ -17,8 +17,6 @@ const result=await ImagePicker.openPicker({
 
 })
 
-
-console.log(result)
 router.push({
   pathname:'SelectedImages',
   params:{data:JSON.stringify(result)}

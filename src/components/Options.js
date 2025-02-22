@@ -9,7 +9,7 @@ import { notVisible, } from "../redux/store";
 const Options = () => {
   const dispatch=useDispatch()
   const launchGallery=async () => {
-    
+    dispatch(notVisible())
 const result=await ImagePicker.openPicker({
   multiple:true,
   mediaType:'photo',
@@ -23,6 +23,10 @@ router.push({
 })
   }
 
+  const handleScanDocument=()=>{
+    router.push('scannedImages')
+  }
+
   return (
  <TouchableWithoutFeedback onPress={()=>dispatch(notVisible())}>
      <View style={styles.optioncContainer}>
@@ -30,7 +34,7 @@ router.push({
     <View style={styles.header}>
             <Text style={styles.headerText}>Choose Photos From:</Text>
         </View>
-      <TouchableOpacity style={styles.subContainer}>
+      <TouchableOpacity onPress={handleScanDocument} style={styles.subContainer}>
         <Text style={styles.optionText}>Scan Documents</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.subContainer}
@@ -51,12 +55,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
 width:width,
-    zIndex:1000,
+   
     height:height,
+    zIndex:1000,
   },
   optionsubContainer:{
 position:'absolute',
-bottom:0
+bottom:0,
+zIndex:1000,
+backgroundColor:'white',
   },
   subContainer: {
     borderBottomWidth: 0.5,

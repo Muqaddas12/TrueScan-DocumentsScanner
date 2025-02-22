@@ -17,7 +17,6 @@ const getPdfFiles = async () => {
             return await FileSystem.getInfoAsync(pdfDirectory+pdfname)
         })
       )
-       console.log(detailedPdfFiles)
       
         
         

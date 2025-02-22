@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, TouchableWithoutFeedback, Dimensions, Animated, ScrollView, BackHandler } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, TouchableWithoutFeedback, Dimensions, Animated, ScrollView, ActivityIndicator } from 'react-native';
 import Navbar from '../src/components/Navbar';
 import Footer from '../src/components/Footer';
 import { Provider } from 'react-redux';
@@ -8,6 +8,10 @@ import { store } from '../src/redux/store';
 import getPdfFiles from '../src/helpers/getPdfFiles';
 import getImageFiles from '../src/helpers/getImageFiles';
 import { useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
+import deletePdf from '../src/helpers/deletePdf';
+import sharePdf from '../src/helpers/sharePdf';
+import renamePdf from '../src/helpers/renamePdf';
 
 const { width, height } = Dimensions.get('window');
 
@@ -18,6 +22,8 @@ export default function Homepage() {
   const slideAnim = new Animated.Value(0);
   const [showMsg, setShowMsg] = useState(msg || '');
   const [pdfMenuVisible, setPdfMenuVisible] = useState(false);
+  const [pdfUri, setPdfUri] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   // Fetch PDF files
   useEffect(() => {
@@ -56,48 +62,43 @@ export default function Homepage() {
     });
   };
 
-  // Toggle PDF Menu
-  const togglePdfMenu = () => {
-    if (pdfMenuVisible) {
-      closePdfMenu();
-    } else {
-      openPdfMenu();
-    }
-  };
-
-  // Open Menu Animation
-  const openPdfMenu = () => {
+  const togglePdfMenu = (uri) => {
     setPdfMenuVisible(true);
-    Animated.timing(slideAnim, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
+    setPdfUri(uri);
   };
 
-  // Close Menu Animation
-  const closePdfMenu = () => {
-    Animated.timing(slideAnim, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => setPdfMenuVisible(false));
-  };
-
-  // Handle Back Press (Android Back Button)
-  useEffect(() => {
-    const handleBackPress = () => {
-      if (pdfMenuVisible) {
-        closePdfMenu();
-        return true; // Prevents default back action
+  const pdfMenuHandler = async (item) => {
+    setLoading(true); // Show loader
+    switch (item) {
+      case 'Open': {
+        router.push({
+          pathname: 'renderPdf',
+          params: { image: pdfUri },
+        });
+        break;
       }
-      return false; // Allows default back action
-    };
-
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
-
-    return () => backHandler.remove(); // Clean up listener
-  }, [pdfMenuVisible]);
+      case 'Share': {
+        await sharePdf(pdfUri);
+        break;
+      }
+      case 'Delete': {
+        await deletePdf(pdfUri);
+        const updatedPdfs = pdfFilesInfo.filter((pdf) => pdf.uri !== pdfUri);
+        setPdfFilesInfo(updatedPdfs); // Update UI after deletion
+        setShowMsg('PDF deleted successfully!');
+        break;
+      }
+      case 'Rename': {
+        await renamePdf(pdfUri);
+        setShowMsg('PDF renamed successfully!');
+        break;
+      }
+      default:
+        break;
+    }
+    setPdfMenuVisible(false);
+    setLoading(false); // Hide loader
+  };
 
   return (
     <Provider store={store}>
@@ -113,7 +114,7 @@ export default function Homepage() {
             {pdfFilesInfo.length > 0 ? (
               pdfFilesInfo.map((pdf, index) => (
                 <View key={index}>
-                  <TouchableOpacity onPress={togglePdfMenu} style={styles.pdfItem}>
+                  <TouchableOpacity onPress={() => togglePdfMenu(pdf.uri)} style={styles.pdfItem}>
                     <Image source={{ uri: imagesUri[index] }} style={styles.pdfThumbnail} />
                     <View style={styles.pdfDetailsContainer}>
                       <Text style={styles.pdfTitle}>
@@ -153,12 +154,20 @@ export default function Homepage() {
                   },
                 ]}
               >
-                {['Open', 'Share', 'Delete', 'Rename', 'Details'].map((item, idx) => (
-                  <TouchableOpacity key={idx} onPress={closePdfMenu}>
+                {['Open', 'Share', 'Delete', 'Rename'].map((item, idx) => (
+                  <TouchableOpacity key={idx} onPress={() => pdfMenuHandler(item)}>
                     <Text style={styles.menuOption}>{item}</Text>
                   </TouchableOpacity>
                 ))}
               </Animated.View>
+            </View>
+          )}
+
+          {/* Loading Indicator */}
+          {loading && (
+            <View style={styles.loadingOverlay}>
+              <ActivityIndicator size="large" color="#6200EE" />
+              <Text style={styles.loadingText}>Processing...</Text>
             </View>
           )}
         </View>
@@ -225,12 +234,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#bbb',
   },
-  noPdfText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    marginTop: 20,
-  },
   footerWrapper: {
     height: height * 0.1,
   },
@@ -244,15 +247,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
     elevation: 5,
   },
   menuOption: {
     paddingVertical: 8,
     fontSize: 14,
     color: '#333',
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+  loadingText: {
+    marginTop: 10,
+    color: 'white',
+    fontSize: 18,
   },
 });

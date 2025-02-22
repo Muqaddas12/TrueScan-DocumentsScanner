@@ -19,8 +19,10 @@ const makePdf = async (imagesArray) => {
     await FileSystem.makeDirectoryAsync(imageDirectory, { intermediates: true }).catch(() => {});
 
     try {
-        // Resize images to A4 size
-        const resizedImages = await Promise.all(
+        let resizedImages;
+       if(imagesArray.path){
+         // Resize images to A4 size
+          resizedImages = await Promise.all(
             imagesArray.map(async (image) => {
                 const resizedImage = await ImageManipulator.manipulateAsync(
                     image.path,
@@ -30,6 +32,19 @@ const makePdf = async (imagesArray) => {
                 return { imagePath: resizedImage.uri, width: A4_WIDTH, height: A4_HEIGHT };
             })
         );
+       }else{
+         // Resize images to A4 size
+          resizedImages = await Promise.all(
+            imagesArray.map(async (image) => {
+                const resizedImage = await ImageManipulator.manipulateAsync(
+                    image,
+                    [{ resize: { width: A4_WIDTH, height: A4_HEIGHT } }],
+                    { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
+                );
+                return { imagePath: resizedImage.uri, width: A4_WIDTH, height: A4_HEIGHT };
+            })
+        );
+       }
 
         // Create PDF from resized images
         const options = {

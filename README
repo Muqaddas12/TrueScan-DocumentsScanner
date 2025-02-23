@@ -1,4 +1,5 @@
 # 📄 Doc Scanner
+Note: Rename and Details is not working now i will work on later and some animation is required for smooth running otherwise application is running fine.
 
 A robust **Document Scanner** built using **React Native** and **Expo Router**, designed to capture, process, and store documents efficiently. This application allows users to scan physical documents and convert them into digital copies and convert it into pdf
 

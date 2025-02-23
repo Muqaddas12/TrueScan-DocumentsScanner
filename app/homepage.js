@@ -13,7 +13,7 @@ import deletePdf from '../src/helpers/deletePdf';
 import sharePdf from '../src/helpers/sharePdf';
 
 
-const { width, height } = Dimensions.get('screen');
+const { width, height } = Dimensions.get('window');
 
 export default function Homepage() {
   const { msg } = useLocalSearchParams(); // Get msg from router params
@@ -91,8 +91,7 @@ export default function Homepage() {
         break;
       }
       case 'Rename': {
-    
-        setShowMsg('PDF renamed successfully!');
+       
         break;
       }
       default:
@@ -101,17 +100,13 @@ export default function Homepage() {
     setPdfMenuVisible(false);
     setLoading(false); // Hide loader
   };
-  const handlePdfMenuVisible=()=>{
-    setPdfMenuVisible(false)
-  }
 
   return (
-    <Provider store={store}>
-      
-      <TouchableWithoutFeedback style={{flex:1,height:height}}>
+   
+      <TouchableWithoutFeedback style={{flex:1}}>
         <View style={styles.mainContainer}>
           <Navbar />
-         
+          <StatusBar style="auto" />
 
           {/* Message Display */}
           {showMsg ? <Text style={styles.successMessage}>{showMsg}</Text> : null}
@@ -154,25 +149,8 @@ export default function Homepage() {
           )}
         </View>
       </TouchableWithoutFeedback>
-      {pdfMenuVisible && (
-          <TouchableWithoutFeedback onPress={handlePdfMenuVisible}>
-              <View style={styles.menuOverlay}>
-              <Animated.View
-                style={[
-                  styles.animatedMenu,
-                 
-                ]}
-              >
-                {['Open', 'Share', 'Delete', 'Rename','Details'].map((item, idx) => (
-                  <TouchableOpacity key={idx} onPress={() => pdfMenuHandler(item)}>
-                    <Text style={styles.menuOption}>{item}</Text>
-                  </TouchableOpacity>
-                ))}
-              </Animated.View>
-            </View>
-          </TouchableWithoutFeedback>
-          )}
-    </Provider>
+    
+  
   );
 }
 
@@ -193,7 +171,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRadius: 8,
     marginHorizontal: 10,
-    zIndex:2000
   },
   pdfListContainer: {
     marginTop: height * 0.08,
@@ -240,38 +217,29 @@ const styles = StyleSheet.create({
     height: height * 0.1,
   },
   menuOverlay: {
+    position: 'absolute',
     height:height,
+    borderWidth:4,
     width:width,
-    justifyContent:'center',
-    position:'absolute',
-    justifyContent:'flex-end'
+    backgroundColor:'red',
     
   },
   animatedMenu: {
-    position:'absolute',
     backgroundColor: '#fff',
     borderRadius: 10,
+    padding: 20,
     elevation: 5,
-    width:width,
-    paddingVertical:30,
-    paddingLeft:15,
-  bottom:20, 
-  
- 
   },
   menuOption: {
-    paddingVertical: 10,
+    paddingVertical: 8,
     fontSize: 14,
     color: '#333',
-    borderBottomWidth:.2,
-    paddingHorizontal:10,
   },
   loadingOverlay: {
-   
+    ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.4)',
-  
   },
   loadingText: {
     marginTop: 10,

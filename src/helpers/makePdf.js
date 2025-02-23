@@ -20,7 +20,7 @@ const makePdf = async (imagesArray) => {
 
     try {
         let resizedImages;
-       if(imagesArray.path){
+       if(imagesArray[0].path){
          // Resize images to A4 size
           resizedImages = await Promise.all(
             imagesArray.map(async (image) => {
@@ -33,6 +33,7 @@ const makePdf = async (imagesArray) => {
             })
         );
        }else{
+        console.log('scanneddecument')
          // Resize images to A4 size
           resizedImages = await Promise.all(
             imagesArray.map(async (image) => {
@@ -45,7 +46,6 @@ const makePdf = async (imagesArray) => {
             })
         );
        }
-
         // Create PDF from resized images
         const options = {
             pages: resizedImages,

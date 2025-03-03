@@ -7,6 +7,14 @@
     "newArchEnabled": "true",
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "28c6f40d-3e19-4f81-8113-a84bc6020d02"
+      }
+    }
   }
 }

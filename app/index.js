@@ -1,6 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, TouchableWithoutFeedback, Dimensions, Animated, ScrollView, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Dimensions,
+  Animated,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
 import Navbar from '../src/components/Navbar';
 import Footer from '../src/components/Footer';
 import { Provider } from 'react-redux';
@@ -11,41 +22,33 @@ import { useLocalSearchParams } from 'expo-router';
 import { router } from 'expo-router';
 import deletePdf from '../src/helpers/deletePdf';
 import sharePdf from '../src/helpers/sharePdf';
-
+import renamePdf from '../src/helpers/renamePdf';
+import formatDate from '../src/helpers/formatDate';
+import { MaterialIcons, Feather } from '@expo/vector-icons'; 
 
 const { width, height } = Dimensions.get('screen');
 
 export default function Homepage() {
-  const { msg } = useLocalSearchParams(); // Get msg from router params
+  const { msg } = useLocalSearchParams();
   const [imagesUri, setImagesUri] = useState([]);
   const [pdfFilesInfo, setPdfFilesInfo] = useState([]);
-  const slideAnim = new Animated.Value(0);
   const [showMsg, setShowMsg] = useState(msg || '');
-  const [pdfMenuVisible, setPdfMenuVisible] = useState(false);
   const [pdfUri, setPdfUri] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [iconVisible,setIconVisible]=useState(false)
 
- 
-  // Fetch PDF files
+  const pdfOptions = useRef(new Animated.Value(0)).current;
+  const [pdfMenuVisible, setPdfMenuVisible] = useState(false);
+
   useEffect(() => {
-    const fetchPdfFiles = async () => {
+    const fetchData = async () => {
       const pdfFiles = await getPdfFiles();
-      setPdfFilesInfo(pdfFiles);
-    };
-    fetchPdfFiles();
-  }, []);
-
-  // Fetch PDF Images
-  useEffect(() => {
-    const fetchImages = async () => {
       const result = await getImageFiles();
+      setPdfFilesInfo(pdfFiles);
       setImagesUri(result);
     };
-    fetchImages();
+    fetchData();
   }, []);
 
-  // Hide message after 3 seconds
   useEffect(() => {
     if (showMsg) {
       const timer = setTimeout(() => setShowMsg(''), 3000);
@@ -53,67 +56,68 @@ export default function Homepage() {
     }
   }, [showMsg]);
 
-  // Date formatting
-  const formatDate = (modificationTime) => {
-    const timestamp = modificationTime * 1000; // Convert seconds to milliseconds
-    const date = new Date(timestamp);
-    return date.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
+  const togglePdfMenu = (uri) => {
+    setPdfUri(uri);
+    setPdfMenuVisible(true);
+    Animated.timing(pdfOptions, {
+      toValue: height,
+      duration: 500,
+      useNativeDriver: false,
+    }).start();
   };
 
-  const togglePdfMenu = (uri) => {
-    setPdfMenuVisible(true);
-    setPdfUri(uri);
+  const pdfActionMenu = () => {
+    Animated.timing(pdfOptions, {
+      toValue: 0,
+      duration: 0,
+      useNativeDriver: false,
+    }).start(() => setPdfMenuVisible(false));
   };
 
   const pdfMenuHandler = async (item) => {
-    setLoading(true); // Show loader
+    setLoading(true);
     switch (item) {
-      case 'Open': {
-        router.push({
-          pathname: 'renderPdf',
-          params: { image: pdfUri },
-        });
+      case 'Open':
+        router.push({ pathname: 'renderPdf', params: { image: pdfUri } });
         break;
-      }
-      case 'Share': {
+      case 'Share':
         await sharePdf(pdfUri);
         break;
-      }
-      case 'Delete': {
+      case 'Delete':
         await deletePdf(pdfUri);
-        const updatedPdfs = pdfFilesInfo.filter((pdf) => pdf.uri !== pdfUri);
-        setPdfFilesInfo(updatedPdfs); // Update UI after deletion
+     
         setShowMsg('PDF deleted successfully!');
         break;
-      }
-      case 'Rename': {
-    
-        setShowMsg('PDF renamed successfully!');
-        break;
-      }
+      case 'Rename':
+        renamePdf(pdfUri, (newUri) => {
+          // Update the PDF list and show success message
+          const updatedPdfs = pdfFilesInfo.map((pdf) =>
+            pdf.uri === pdfUri ? { ...pdf, uri: newUri } : pdf
+          );
+          setPdfFilesInfo(updatedPdfs);
+          setShowMsg('PDF renamed successfully!');
+        });
       default:
         break;
     }
-    setPdfMenuVisible(false);
-    setLoading(false); // Hide loader
+    pdfActionMenu();
+    setLoading(false);
   };
-  const handlePdfMenuVisible=()=>{
-    setPdfMenuVisible(false)
-  }
+
+  const menuItems = [
+    { label: 'Open', icon: 'open-in-new' },
+    { label: 'Share', icon: 'share' },
+    { label: 'Delete', icon: 'delete' },
+    { label: 'Rename', icon: 'edit' },
+    
+  ];
 
   return (
     <Provider store={store}>
-      
-      <TouchableWithoutFeedback style={{flex:1,height:height}}>
+      <TouchableWithoutFeedback>
         <View style={styles.mainContainer}>
           <Navbar />
-         
 
-          {/* Message Display */}
           {showMsg ? <Text style={styles.successMessage}>{showMsg}</Text> : null}
 
           <ScrollView contentContainerStyle={styles.pdfListContainer}>
@@ -142,10 +146,21 @@ export default function Homepage() {
             <Footer />
           </View>
 
-          {/* PDF Options Menu */}
-        
+          {pdfMenuVisible && (
+            <TouchableWithoutFeedback onPress={pdfActionMenu}>
+              <Animated.View style={[styles.menuOverlay, { height: pdfOptions }]}>
+                <View style={styles.animatedMenu}>
+                  {menuItems.map((item, idx) => (
+                    <TouchableOpacity key={idx} onPress={() => pdfMenuHandler(item.label)} style={styles.menuItem}>
+                      <MaterialIcons name={item.icon} size={24} color="#6200EE" style={styles.menuIcon} />
+                      <Text style={styles.menuOption}>{item.label}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </Animated.View>
+            </TouchableWithoutFeedback>
+          )}
 
-          {/* Loading Indicator */}
           {loading && (
             <View style={styles.loadingOverlay}>
               <ActivityIndicator size="large" color="#6200EE" />
@@ -154,24 +169,6 @@ export default function Homepage() {
           )}
         </View>
       </TouchableWithoutFeedback>
-      {pdfMenuVisible && (
-          <TouchableWithoutFeedback onPress={handlePdfMenuVisible}>
-              <View style={styles.menuOverlay}>
-              <Animated.View
-                style={[
-                  styles.animatedMenu,
-                 
-                ]}
-              >
-                {['Open', 'Share', 'Delete', 'Rename','Details'].map((item, idx) => (
-                  <TouchableOpacity key={idx} onPress={() => pdfMenuHandler(item)}>
-                    <Text style={styles.menuOption}>{item}</Text>
-                  </TouchableOpacity>
-                ))}
-              </Animated.View>
-            </View>
-          </TouchableWithoutFeedback>
-          )}
     </Provider>
   );
 }
@@ -181,7 +178,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     width: width,
-    height:height,
+    height: height,
   },
   successMessage: {
     backgroundColor: 'green',
@@ -193,7 +190,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRadius: 8,
     marginHorizontal: 10,
-    zIndex:2000
+    zIndex: 2000,
   },
   pdfListContainer: {
     marginTop: height * 0.08,
@@ -222,56 +219,38 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 4,
   },
-  pdfSize: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 2,
-  },
-  pdfDate: {
-    fontSize: 12,
-    color: '#999',
-    marginBottom: 2,
-  },
-  pdfPath: {
-    fontSize: 12,
-    color: '#bbb',
-  },
   footerWrapper: {
     height: height * 0.1,
   },
   menuOverlay: {
-    height:height,
-    width:width,
-    justifyContent:'center',
-    position:'absolute',
-    justifyContent:'flex-end'
-    
+    position: 'absolute',
+    width: width,
+    justifyContent: 'flex-end',
+    bottom: 0,
   },
   animatedMenu: {
-    position:'absolute',
     backgroundColor: '#fff',
     borderRadius: 10,
     elevation: 5,
-    width:width,
-    paddingVertical:30,
-    paddingLeft:15,
-  bottom:20, 
-  
- 
+    paddingVertical: 30,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+  },
+  menuIcon: {
+    marginRight: 15,
   },
   menuOption: {
-    paddingVertical: 10,
-    fontSize: 14,
+    fontSize: 16,
     color: '#333',
-    borderBottomWidth:.2,
-    paddingHorizontal:10,
   },
   loadingOverlay: {
-   
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.4)',
-  
   },
   loadingText: {
     marginTop: 10,

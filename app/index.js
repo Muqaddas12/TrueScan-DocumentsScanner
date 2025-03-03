@@ -85,7 +85,7 @@ export default function Homepage() {
         break;
       case 'Delete':
         await deletePdf(pdfUri);
-     
+     router.replace('/')
         setShowMsg('PDF deleted successfully!');
         break;
       case 'Rename':

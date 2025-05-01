@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "DocScanner",
-    "slug": "DocScanner",
+    "name": "TrueScan-DocumentScanner",
+    "slug": "trueScan-documentscanner",
     "version": "1.0.0",
-    "scheme": "docscanner",
+    "scheme": "truescan-documentscanner",
     "newArchEnabled": "true",
     "plugins": [
       "expo-router"

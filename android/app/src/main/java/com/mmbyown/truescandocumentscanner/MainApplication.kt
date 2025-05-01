@@ -1,4 +1,5 @@
-package com.docscanner
+package com.mmbyown.truescandocumentscanner;
+
 
 import android.app.Application
 import android.content.res.Configuration

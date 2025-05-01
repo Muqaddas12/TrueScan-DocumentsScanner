@@ -5,10 +5,10 @@ const Navbar = () => {
   return (
     <View style={styles.navbarContainer}>
    
-      {/* <Image
-        source={require('./path-to-your-logo.png')} // Change path to your logo
+      <Image
+        source={require('../images/headerLogo.png')} // Change path to your logo
         style={styles.logo}
-      /> */}
+      />
       <Text style={styles.title}>DocScanner</Text>
     </View>
   );
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     
     flexDirection: 'row',  // Align logo and title in a row
     alignItems: 'center',  // Vertically center the items
-    justifyContent: 'space-between',  // Add spacing between logo and title
+  
     backgroundColor: '#5e46b4',  // Navbar background color
     padding: 10,  // Padding for the navbar
     position:'absolute',
@@ -27,9 +27,11 @@ const styles = StyleSheet.create({
     zIndex:1000,
   },
   logo: {
-    width: 40,  // Adjust size of the logo
-    height: 40,
+    width: 30,  // Adjust size of the logo
+    height: 30,
     resizeMode: 'contain',  // Make sure the logo is contained without distortion
+    borderRadius:10,
+    marginRight:10,
   },
   title: {
     color: '#fff',  // White text color for contrast

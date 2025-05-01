@@ -1,0 +1,37 @@
+At DocScanner, your privacy is very important to us. This Privacy Policy explains how we collect, use, and protect your information when you use our mobile application.
+
+1. Information We Collect
+a. Personal Information
+We do not collect any personal information such as your name, email address, or contact number unless explicitly provided by you for support or feedback.
+
+b. Scanned Content
+All documents scanned using DocScanner are processed locally on your device. We do not store, upload, or transmit any scanned files to our servers. You have full control over your data.
+
+c. Crash & Usage Data
+To improve app performance and fix bugs, we may collect anonymous crash reports and usage analytics through tools like Google Play Console. These do not contain any personally identifiable information.
+
+2. Permissions Used
+DocScanner may request access to:
+
+Camera – to scan documents.
+
+Storage – to save and access scanned files.
+
+We only use these permissions to provide the core functionality of the app.
+
+3. Data Security
+We value your trust and take precautions to keep your data safe. All scanned documents are stored locally on your device and are not transmitted to any external servers by us.
+
+4. Third-Party Services
+DocScanner may use third-party libraries or SDKs (such as analytics or ad services) which may collect limited, anonymized data. Please refer to those providers' privacy policies for more information.
+
+5. Children’s Privacy
+Our app is not intended for children under the age of 13. We do not knowingly collect personal data from children.
+
+6. Changes to This Policy
+We may update our Privacy Policy from time to time. We recommend reviewing this page periodically for any changes. Changes are effective immediately once posted here.
+
+7. Contact Us
+If you have any questions or concerns about this Privacy Policy, feel free to contact us at:
+
+📧 [muqaddasmalik781@gmail.com]

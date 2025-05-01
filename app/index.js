@@ -128,7 +128,7 @@ export default function Homepage() {
                     <Image source={{ uri: imagesUri[index] }} style={styles.pdfThumbnail} />
                     <View style={styles.pdfDetailsContainer}>
                       <Text style={styles.pdfTitle}>
-                        {pdf.uri.replace('file:///data/user/0/com.docscanner/files/pdfFiles/', '')}
+                        {pdf.uri.replace('file:///data/user/0/com.mmbyown.truescandocumentscanner/files/pdfFiles/', '')}
                       </Text>
                       <Text style={styles.pdfSize}>{(pdf.size / 1024 / 1024).toFixed(2)} MB</Text>
                       <Text style={styles.pdfDate}>{formatDate(pdf.modificationTime)}</Text>

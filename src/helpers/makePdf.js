@@ -7,11 +7,9 @@ const makePdf = async (imagesArray) => {
     const date = Date.now();
     console.log('imagesArray:', imagesArray);
 
-    // A4 dimensions in pixels (300 DPI)
     const A4_WIDTH = 2480;
     const A4_HEIGHT = 3508;
 
-    // Ensure PDF and image directories exist
     const pdfDirectory = `${FileSystem.documentDirectory}pdfFiles/`;
     const imageDirectory = `${FileSystem.documentDirectory}imageFiles/`;
 
@@ -19,33 +17,23 @@ const makePdf = async (imagesArray) => {
     await FileSystem.makeDirectoryAsync(imageDirectory, { intermediates: true }).catch(() => {});
 
     try {
-        let resizedImages;
-       if(imagesArray[0].path){
-         // Resize images to A4 size
-          resizedImages = await Promise.all(
-            imagesArray.map(async (image) => {
+        // Normalize image paths from mixed objects and strings
+        const normalizedPaths = imagesArray.map((item) =>
+            typeof item === 'string' ? item : item.path
+        );
+
+        // Resize all images to A4 size
+        const resizedImages = await Promise.all(
+            normalizedPaths.map(async (imagePath) => {
                 const resizedImage = await ImageManipulator.manipulateAsync(
-                    image.path,
+                    imagePath,
                     [{ resize: { width: A4_WIDTH, height: A4_HEIGHT } }],
                     { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
                 );
                 return { imagePath: resizedImage.uri, width: A4_WIDTH, height: A4_HEIGHT };
             })
         );
-       }else{
-        console.log('scanneddecument')
-         // Resize images to A4 size
-          resizedImages = await Promise.all(
-            imagesArray.map(async (image) => {
-                const resizedImage = await ImageManipulator.manipulateAsync(
-                    image,
-                    [{ resize: { width: A4_WIDTH, height: A4_HEIGHT } }],
-                    { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
-                );
-                return { imagePath: resizedImage.uri, width: A4_WIDTH, height: A4_HEIGHT };
-            })
-        );
-       }
+
         // Create PDF from resized images
         const options = {
             pages: resizedImages,
@@ -55,7 +43,7 @@ const makePdf = async (imagesArray) => {
         const result = await createPdf(options);
         console.log('PDF created successfully:', result);
 
-        // Save the first image as reference
+        // Save the first image as a preview/reference
         await FileSystem.copyAsync({
             from: resizedImages[0].imagePath,
             to: `${imageDirectory}${date}.png`,

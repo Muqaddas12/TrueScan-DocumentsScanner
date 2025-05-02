@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import DocumentScanner from 'react-native-document-scanner-plugin';
+import ImagePicker from 'react-native-image-crop-picker';
 import { 
     View, 
     Text, 
@@ -22,7 +23,7 @@ const ScannedImagesContainer = () => {
     const [Images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [loadingMessage, setLoadingMessage] = useState("");
-
+    const [optionToggleClick,setOptionToggleClick]=useState(false)
     const router = useRouter();
 
     // Function to remove an image
@@ -56,9 +57,35 @@ const ScannedImagesContainer = () => {
             setLoadingMessage("");
         }
     };
+ // Function to add new images with loading
+ const addImage = async () => {
+    setOptionToggleClick(false)
+    setLoading(true);
+    setLoadingMessage("Adding images...");
+    try {
+        const moreImages = await ImagePicker.openPicker({
+            mediaType: 'photo',
+            quality: 1,
+            cropping: true,
+            multiple: true
+        });
 
+        if (Array.isArray(moreImages)) {
+            setImages(prevImages => [...prevImages, ...moreImages]);
+        } else {
+            setImages(prevImages => [...prevImages, moreImages]);
+        }
+    } catch (error) {
+       // Show the error as a toast
+ToastAndroid.show('Error selecting images: ' + error.message, ToastAndroid.LONG);
+    } finally {
+        setLoading(false);
+        setLoadingMessage("");
+    }
+};
     // Function to initiate document scanning
     const handleAddImage = async () => {
+       setOptionToggleClick(false)
         const { scannedImages } = await DocumentScanner.scanDocument();
         if (scannedImages.length > 0) {
             setImages(prev => [...prev, ...scannedImages]);
@@ -68,6 +95,11 @@ const ScannedImagesContainer = () => {
     useEffect(() => {
         handleAddImage();
     }, []);
+
+        
+const optionToggle=()=>{
+    setOptionToggleClick(false)
+    }
 
     return (
         <View style={styles.container}>
@@ -87,7 +119,11 @@ const ScannedImagesContainer = () => {
             <ScrollView contentContainerStyle={styles.imagesContainer}>
                 {Images.map((res, index) => (
                     <View style={styles.imageView} key={index}>
-                        <Image style={styles.userImage} source={{ uri: res }} />
+                            
+                                  <Image 
+                       style={styles.userImage} 
+                       source={{ uri: typeof res === 'string' ? res : res.path }} 
+                     />
                         <View style={styles.imageFooter}>
                             <Text style={styles.imageIndex}>{index + 1}</Text>
                             <TouchableOpacity onPress={() => removeImage(index)} disabled={loading}>
@@ -100,13 +136,36 @@ const ScannedImagesContainer = () => {
 
             {/* Footer */}
             <View style={styles.footerContainer}>
-                <TouchableOpacity style={styles.addButton} disabled={loading} onPress={handleAddImage}>
+                <TouchableOpacity style={styles.addButton} disabled={loading} onPress={()=>{setOptionToggleClick(true)}}>
                     <Icon name="plus" style={styles.plusIcon} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleCreatePdf} style={styles.createPdfButton} disabled={loading}>
                     <Text style={styles.createPdfText}>Create PDF</Text>
                 </TouchableOpacity>
             </View>
+
+            {optionToggleClick && (
+              <TouchableOpacity style={styles.optionToggle} onPress={optionToggle}>
+            
+                <View style={[styles.options, { position: 'absolute', bottom: 0, left: 0, right: 0 }]}>
+                  <TouchableOpacity onPress={addImage}>
+                    <Text style={styles.optionText}>Gallery</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handleAddImage}>
+                    <Text style={styles.optionText}>Scan Documents</Text>
+                  </TouchableOpacity>
+            
+              </View>
+              </TouchableOpacity>
+            )}
+
+
+
+
+ 
+
+
+
         </View>
     );
 };
@@ -211,6 +270,34 @@ const styles = StyleSheet.create({
         color: "#5e46b4",
         fontWeight: "bold",
     },
+    optionToggle:{
+
+        position:'absolute',
+        top:0,
+        left:0,
+        right:0,
+        bottom:0,
+        width:width,
+        backgroundColor:'transparent',
+        zIndex:10000,
+        
+            },
+            options: {
+                backgroundColor: 'white',
+                padding: 16,
+                borderRadius: 10,
+                elevation: 5, // for Android shadow
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.2,
+                shadowRadius: 4,
+              },
+              optionText: {
+                fontSize: 16,
+                marginVertical: 8,
+                textAlign: 'center',
+                color: '#333',
+              },
 });
 
 export default ScannedImagesContainer;

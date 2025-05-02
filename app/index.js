@@ -1,4 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
+
 import React, { useState, useEffect, useRef } from 'react';
 import {
   StyleSheet,
@@ -36,6 +36,7 @@ export default function Homepage() {
   const [pdfUri, setPdfUri] = useState(null);
   const [loading, setLoading] = useState(false);
 
+
   const pdfOptions = useRef(new Animated.Value(0)).current;
   const [pdfMenuVisible, setPdfMenuVisible] = useState(false);
 
@@ -51,8 +52,11 @@ export default function Homepage() {
 
   useEffect(() => {
     if (showMsg) {
-      const timer = setTimeout(() => setShowMsg(''), 3000);
-      return () => clearTimeout(timer);
+      const timer = setTimeout(() => setShowMsg(null), 3000);
+      return () => {
+
+        clearTimeout(timer);
+      };
     }
   }, [showMsg]);
 
@@ -85,8 +89,9 @@ export default function Homepage() {
         break;
       case 'Delete':
         await deletePdf(pdfUri);
-     router.replace('/')
         setShowMsg('PDF deleted successfully!');
+     router.replace('/')
+  
         break;
       case 'Rename':
         renamePdf(pdfUri, (newUri) => {

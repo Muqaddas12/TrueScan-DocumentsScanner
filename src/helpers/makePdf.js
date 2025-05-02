@@ -1,20 +1,30 @@
 import { createPdf } from "react-native-images-to-pdf";
-import * as FileSystem from 'expo-file-system';
 import * as ImageManipulator from 'expo-image-manipulator';
-
+import RNFS from 'react-native-fs'
 // Function to create a PDF from images
 const makePdf = async (imagesArray) => {
+   
     const date = Date.now();
-    console.log('imagesArray:', imagesArray);
+const desUri=`${RNFS.DownloadDirectoryPath}/TrueScan/PdfFiles/`
+const imageDirectory = `${RNFS.DownloadDirectoryPath}/TrueScan/.ImagesFiles/`
+    //checking pdffiles dic exists or not
+    if(!await RNFS.exists(imageDirectory)){
+        await RNFS.mkdir(imageDirectory)
+        console.log('image dic created')
+       }
+    if(!await RNFS.exists(desUri)){
+
+        await RNFS.mkdir(desUri)
+        console.log('dic created')
+    }
+    else{
+        console.log('dic exists')
+    }
+
+
 
     const A4_WIDTH = 2480;
     const A4_HEIGHT = 3508;
-
-    const pdfDirectory = `${FileSystem.documentDirectory}pdfFiles/`;
-    const imageDirectory = `${FileSystem.documentDirectory}imageFiles/`;
-
-    await FileSystem.makeDirectoryAsync(pdfDirectory, { intermediates: true }).catch(() => {});
-    await FileSystem.makeDirectoryAsync(imageDirectory, { intermediates: true }).catch(() => {});
 
     try {
         // Normalize image paths from mixed objects and strings
@@ -37,17 +47,14 @@ const makePdf = async (imagesArray) => {
         // Create PDF from resized images
         const options = {
             pages: resizedImages,
-            outputPath: `${pdfDirectory}${date}.pdf`,
+            outputPath: `${desUri}TrueScan_${date}.pdf`,
         };
 
         const result = await createPdf(options);
         console.log('PDF created successfully:', result);
 
-        // Save the first image as a preview/reference
-        await FileSystem.copyAsync({
-            from: resizedImages[0].imagePath,
-            to: `${imageDirectory}${date}.png`,
-        });
+       
+        await RNFS.copyFile(resizedImages[0].imagePath,`${imageDirectory}TrueScan_${date}.png`)
 
     } catch (error) {
         console.error('Error creating PDF:', error);

@@ -1,9 +1,14 @@
 import prompt from "react-native-prompt-android";
-import * as FileSystem from 'expo-file-system';
+import RNFS from 'react-native-fs'
 
-const renamePdf = (pdfUri, onSuccess) => {
+
+const renamePdf = (name, onSuccess) => {
+
+  const desUri=`${RNFS.DownloadDirectoryPath}/TrueScan/PdfFiles/`
+  const imageDirectory = `${RNFS.DownloadDirectoryPath}/TrueScan/.ImagesFiles/`
+  const imageName=name.replace('.pdf','.png')
     try {
-        const directory = pdfUri.substring(0, pdfUri.lastIndexOf('/') + 1);
+       
 
         prompt(
             'Rename PDF',
@@ -22,26 +27,21 @@ const renamePdf = (pdfUri, onSuccess) => {
                             return;
                         }
 
-                        const newUri = `${directory}${newName}.pdf`;
+                        const newPdfUri = `${desUri}${newName}.pdf`;
+                        const newImageUri=`${imageDirectory}${newName}.png`
+                        const oldPdfUri=`${desUri}${name}`
+                        const oldImageUri=`${imageDirectory}${imageName}`
+                        
 
-                        // Check if the new name already exists
-                        const fileExists = await FileSystem.getInfoAsync(newUri);
-                        if (fileExists.exists) {
-                            alert('File with this name already exists!');
-                            return;
-                        }
+                        await RNFS.moveFile(`${desUri}${name}`,newPdfUri)
+                        await RNFS.moveFile(`${imageDirectory}${imageName}`,newImageUri)
+                       
 
-                        // Perform rename operation
-                        await FileSystem.moveAsync({
-                            from: pdfUri,
-                            to: newUri,
-                        });
-
-                        console.log('PDF renamed successfully:', newUri);
+                        console.log('PDF renamed successfully:', newPdfUri);
                         alert('PDF renamed successfully!');
 
                         // Trigger callback to update UI
-                        if (onSuccess) onSuccess(newUri);
+                        if (onSuccess) onSuccess(newPdfUri);
                     },
                     style: 'default',
                 },
@@ -51,10 +51,12 @@ const renamePdf = (pdfUri, onSuccess) => {
                 cancelable: true,
             }
         );
+    
     } catch (error) {
         console.error('Error renaming PDF:', error);
         alert('Failed to rename PDF');
     }
+ 
 };
 
 export default renamePdf;

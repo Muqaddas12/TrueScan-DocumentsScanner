@@ -1,18 +1,19 @@
-import * as Sharing from 'expo-sharing';
+import Share from 'react-native-share';
+import RNFS from 'react-native-fs'
+const sharePdf = async (name) => {
+  try {
+    const desUri=`${RNFS.DownloadDirectoryPath}/TrueScan/PdfFiles/`
+    const options = {
+      title: 'Share PDF',
+      url: `file://${desUri}${name}`, 
+      type: 'application/pdf',
+      failOnCancel: false,
+    };
 
-const sharePdf = async (uri) => {
-    try {
-        const isShareable = await Sharing.isAvailableAsync();
-        
-        if (!isShareable) {
-            console.error('Sharing is not available on this device.');
-            return;
-        }
-        
-        await Sharing.shareAsync(uri);
-    } catch (error) {
-        console.error('Error sharing PDF:', error);
-    }
+    await Share.open(options);
+  } catch (error) {
+    console.error('Error sharing PDF:', error);
+  }
 };
 
 export default sharePdf;

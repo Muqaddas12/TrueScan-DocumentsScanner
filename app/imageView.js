@@ -10,9 +10,11 @@ import {
   Alert,
   PermissionsAndroid,
   Platform,
+  NativeModules
 } from "react-native";
-import RNFS from "react-native-fs";
+
 import ReactNativeBlobUtil from 'react-native-blob-util'
+const { TrueScanStorage } = NativeModules;
 
 const { width, height } = Dimensions.get("window");
 
@@ -39,37 +41,30 @@ const ImageView = () => {
   // Function to export and save image
   const exportAsImage = async () => {
     try {
-
       const hasPermission = await requestPermission();
       if (!hasPermission) {
         Alert.alert("Permission denied", "Storage permission is required.");
         return;
       }
-      console.log(hasPermission)
-
-      const cleanedUri = sourceUri.replace("file://", ""); // Clean URI if needed
-      const fileName = `TrueScan_${Date.now()}.jpg`; // File name with timestamp
-
-      // Path to save the image
-      const savePath = `${RNFS.DownloadDirectoryPath}/${fileName}`;
-      
-const file=ReactNativeBlobUtil.fs.dirs.LegacyDownloadDir
-
-console.log(file)
-      // await ReactNativeBlobUtil.fs.mkdir(`${file}/TrueScan`)
-      // Ensure the directory exists
-      // await RNFS.mkdir(`${RNFS.DownloadDirectoryPath}/TrueScan/`);
-
-      // Copy the image to the desired location
-      // await RNFS.copyFile(cleanedUri, savePath);
-      await ReactNativeBlobUtil.fs.cp(cleanedUri,savePath)
-
+  
+      const cleanedUri = sourceUri.replace("file://", "");
+      const fileName = `TrueScan_${Date.now()}.jpg`;
+  
+      // Call native module to get or create the TrueScan folder path
+      const folderPath = await TrueScanStorage.createTrueScanDownloadFolder();
+  
+      const savePath = `${folderPath}/${fileName}`;
+  
+      // Copy file using react-native-blob-util
+      await ReactNativeBlobUtil.fs.cp(cleanedUri, savePath);
+  
       Alert.alert("Saved!", `Image saved to: ${savePath}`);
     } catch (err) {
       console.error("Error saving image:", err);
       Alert.alert("Error", "Failed to save image.");
     }
   };
+  
 
   return (
     <View style={styles.container}>

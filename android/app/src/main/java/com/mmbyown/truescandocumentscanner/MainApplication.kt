@@ -1,5 +1,5 @@
 package com.mmbyown.truescandocumentscanner;
-
+import com.mmbyown.truescandocumentscanner.TrueScanStorageModule;
 
 import android.app.Application
 import android.content.res.Configuration
@@ -26,6 +26,7 @@ class MainApplication : Application(), ReactApplication {
             val packages = PackageList(this).packages
             // Packages that cannot be autolinked yet can be added manually here, for example:
             // packages.add(new MyReactNativePackage());
+              packages.add(TrueScanStoragePackage())
             return packages
           }
 

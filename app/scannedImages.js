@@ -120,10 +120,15 @@ const optionToggle=()=>{
                 {Images.map((res, index) => (
                     <View style={styles.imageView} key={index}>
                             
-                                  <Image 
-                       style={styles.userImage} 
-                       source={{ uri: typeof res === 'string' ? res : res.path }} 
-                     />
+                                  <TouchableOpacity   style={styles.userImage}  onPress={()=>router.push({
+                                             pathname:'imageView',
+                                             params:{sourceUri: typeof res === 'string' ? res : res.path}
+                                            })}>
+                                            <Image 
+                                   style={styles.userImage} 
+                                   source={{ uri: typeof res === 'string' ? res : res.path }} 
+                                 />
+                                            </TouchableOpacity>
                         <View style={styles.imageFooter}>
                             <Text style={styles.imageIndex}>{index + 1}</Text>
                             <TouchableOpacity onPress={() => removeImage(index)} disabled={loading}>

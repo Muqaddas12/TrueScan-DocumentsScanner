@@ -1,12 +1,13 @@
-import * as FileSystem from 'expo-file-system';
+import RNFS from 'react-native-fs'
 
-const deletePdf = async (uri) => {
+const deletePdf = async (name) => {
+const desUri=`${RNFS.DownloadDirectoryPath}/TrueScan/PdfFiles/`
+const imageDirectory = `${RNFS.DownloadDirectoryPath}/TrueScan/.ImagesFiles/`
+const imageName=name.replace('.pdf','.png')
     try {
-        const imageUri = uri.replace('file:///data/user/0/com.docscanner/files/pdfFiles/', '').replace('.pdf', '.png');
-        const imageDirectory = `${FileSystem.documentDirectory}imageFiles/${imageUri}`;
+        await RNFS.unlink(`${desUri}${name}`)
+        await RNFS.unlink(`${imageDirectory}${imageName}`)
         
-        await FileSystem.deleteAsync(uri, { idempotent: true });
-        await FileSystem.deleteAsync(imageDirectory, { idempotent: true });
         console.log('deleted successfully')
     } catch (error) {
         console.error('Error deleting files:', error);

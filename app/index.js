@@ -35,6 +35,7 @@ export default function Homepage() {
   const [showMsg, setShowMsg] = useState(msg || '');
   const [pdfUri, setPdfUri] = useState(null);
   const [loading, setLoading] = useState(false);
+  
 
 
   const pdfOptions = useRef(new Animated.Value(0)).current;
@@ -94,14 +95,10 @@ export default function Homepage() {
   
         break;
       case 'Rename':
-        renamePdf(pdfUri, (newUri) => {
-          // Update the PDF list and show success message
-          const updatedPdfs = pdfFilesInfo.map((pdf) =>
-            pdf.uri === pdfUri ? { ...pdf, uri: newUri } : pdf
-          );
-          setPdfFilesInfo(updatedPdfs);
-          setShowMsg('PDF renamed successfully!');
-        });
+       renamePdf(pdfUri)
+     
+        setShowMsg('PDF renamed successfully!');
+        break;
       default:
         break;
     }
@@ -129,15 +126,15 @@ export default function Homepage() {
             {pdfFilesInfo.length > 0 ? (
               pdfFilesInfo.map((pdf, index) => (
                 <View key={index}>
-                  <TouchableOpacity onPress={() => togglePdfMenu(pdf.uri)} style={styles.pdfItem}>
+                  <TouchableOpacity onPress={() => togglePdfMenu(pdf.name)} style={styles.pdfItem}>
                     <Image source={{ uri: imagesUri[index] }} style={styles.pdfThumbnail} />
                     <View style={styles.pdfDetailsContainer}>
                       <Text style={styles.pdfTitle}>
-                        {pdf.uri.replace('file:///data/user/0/com.mmbyown.truescandocumentscanner/files/pdfFiles/', '')}
+                        {pdf.name}
                       </Text>
-                      <Text style={styles.pdfSize}>{(pdf.size / 1024 / 1024).toFixed(2)} MB</Text>
-                      <Text style={styles.pdfDate}>{formatDate(pdf.modificationTime)}</Text>
-                      <Text style={styles.pdfPath}>{pdf.uri.replace('file:///data/user/0/', '')}</Text>
+                      <Text style={styles.pdfSize}>{(pdf.size / (1024 * 1024)).toFixed(2)} MB</Text>
+                      <Text style={styles.pdfDate}>{formatDate(pdf.modificationDate)}</Text>
+                      <Text style={styles.pdfPath}>{pdf.path.replace('/storage/emulated/0/','')}</Text>
                     </View>
                   </TouchableOpacity>
                 </View>

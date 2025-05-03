@@ -11,6 +11,7 @@ import {
   Animated,
   ScrollView,
   ActivityIndicator,
+  ToastAndroid,
 } from 'react-native';
 import Navbar from '../src/components/Navbar';
 import Footer from '../src/components/Footer';
@@ -42,13 +43,17 @@ export default function Homepage() {
   const [pdfMenuVisible, setPdfMenuVisible] = useState(false);
 
   useEffect(() => {
+   
     const fetchData = async () => {
       const pdfFiles = await getPdfFiles();
+
       const result = await getImageFiles();
+      console.log('hello from ')
       setPdfFilesInfo(pdfFiles);
       setImagesUri(result);
     };
     fetchData();
+    
   }, []);
 
   useEffect(() => {
@@ -90,14 +95,14 @@ export default function Homepage() {
         break;
       case 'Delete':
         await deletePdf(pdfUri);
-        setShowMsg('PDF deleted successfully!');
+       ToastAndroid.show('PDF deleted successfully!',ToastAndroid.LONG)
      router.replace('/')
   
         break;
       case 'Rename':
        renamePdf(pdfUri)
-     
-        setShowMsg('PDF renamed successfully!');
+       ToastAndroid.show('PDF renamed successfully!',ToastAndroid.LONG)
+        
         break;
       default:
         break;
@@ -127,7 +132,7 @@ export default function Homepage() {
               pdfFilesInfo.map((pdf, index) => (
                 <View key={index}>
                   <TouchableOpacity onPress={() => togglePdfMenu(pdf.name)} style={styles.pdfItem}>
-                    <Image source={{ uri: imagesUri[index] }} style={styles.pdfThumbnail} />
+                    <Image source={{ uri: `file://${imagesUri[index]}` }} style={styles.pdfThumbnail} />
                     <View style={styles.pdfDetailsContainer}>
                       <Text style={styles.pdfTitle}>
                         {pdf.name}

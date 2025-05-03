@@ -9,22 +9,26 @@ import {
     Image, 
     ScrollView, 
     Dimensions, 
-    ActivityIndicator 
+    ActivityIndicator, 
+    ToastAndroid
 } from "react-native";
 import Icon from 'react-native-vector-icons/AntDesign';
 import Navbar from "../src/components/Navbar";
 import makePdf from "../src/helpers/makePdf";
 import { useRouter } from 'expo-router';
-
+import { useDispatch,useSelector } from 'react-redux';
+import { setTempUri,clearTempUri } from '../src/redux/store';
 const { width, height } = Dimensions.get('window');
 
 const ScannedImagesContainer = () => {
-
+ const dispatch=useDispatch()
+ const router = useRouter();
     const [Images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [loadingMessage, setLoadingMessage] = useState("");
     const [optionToggleClick,setOptionToggleClick]=useState(false)
-    const router = useRouter();
+    const imageUri = useSelector(state => state.tempUri.uri);
+ 
 
     // Function to remove an image
     const removeImage = (index) => {
@@ -40,12 +44,17 @@ const ScannedImagesContainer = () => {
 
     // Function to create a PDF
     const handleCreatePdf = async () => {
-        if (Images.length === 0) return;
+        if (Images.length === 0){
+            ToastAndroid.show('Please scan or select image at least one image ',ToastAndroid.LONG)
+            return;
+        } 
 
         setLoading(true);
         setLoadingMessage("Creating PDF in progress…");
         try {
             await makePdf(Images);
+           dispatch(setTempUri(null))
+
             router.push({
                 pathname: '/',
                 params: { msg: 'PDF created successfully' },
@@ -87,20 +96,31 @@ ToastAndroid.show('Error selecting images: ' + error.message, ToastAndroid.LONG)
     const handleAddImage = async () => {
        setOptionToggleClick(false)
         const { scannedImages } = await DocumentScanner.scanDocument();
+        console.log(scannedImages.length,'from sacnned images')
         if (scannedImages.length > 0) {
             setImages(prev => [...prev, ...scannedImages]);
         }
     };
 
     useEffect(() => {
-        handleAddImage();
+        if(imageUri){
+            setImages(imageUri)
+        }else{
+            handleAddImage();
+        }
     }, []);
 
         
 const optionToggle=()=>{
     setOptionToggleClick(false)
     }
-
+const saveImageUriBeforeRouteChange=(res)=>{
+dispatch(setTempUri(Images))
+    router.push({
+        pathname:'imageView',
+        params:{sourceUri: typeof res === 'string' ? res : res.path}
+       })
+}
     return (
         <View style={styles.container}>
             <Navbar />
@@ -120,10 +140,7 @@ const optionToggle=()=>{
                 {Images.map((res, index) => (
                     <View style={styles.imageView} key={index}>
                             
-                                  <TouchableOpacity   style={styles.userImage}  onPress={()=>router.push({
-                                             pathname:'imageView',
-                                             params:{sourceUri: typeof res === 'string' ? res : res.path}
-                                            })}>
+                                  <TouchableOpacity   style={styles.userImage}  onPress={()=>saveImageUriBeforeRouteChange(res)}>
                                             <Image 
                                    style={styles.userImage} 
                                    source={{ uri: typeof res === 'string' ? res : res.path }} 

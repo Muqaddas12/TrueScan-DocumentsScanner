@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useDebugValue, useEffect, useState } from "react";
 import DocumentScanner from 'react-native-document-scanner-plugin';
 import { 
     View, 
@@ -18,13 +18,23 @@ import ImagePicker from 'react-native-image-crop-picker';
 import Navbar from "../src/components/Navbar";
 const { width, height } = Dimensions.get('window');
 import makePdf from "../src/helpers/makePdf";
+import { useDispatch,useSelector } from 'react-redux';
+import { setTempUri,clearTempUri } from '../src/redux/store';
 
 const SelectedImages = () => {
+    const dispatch=useDispatch()
     const result = JSON.parse(useLocalSearchParams().data);
     const [images, setImages] = useState(result);
     const [loading, setLoading] = useState(false);
     const [loadingMessage, setLoadingMessage] = useState("");
     const [optionToggleClick,setOptionToggleClick]=useState(false)
+    const imageUri = useSelector(state => state.tempUri.uri); 
+    useEffect(()=>{
+if(imageUri){
+    setImages(imageUri)
+}
+    },[])
+
     // Function to remove an image with loading
     const removeImage = async (index) => {
         setLoading(true);
@@ -36,7 +46,14 @@ const SelectedImages = () => {
             setLoadingMessage("");
         }
     };
-
+const saveImageUriBeforeRouteChange=(res)=>{
+   dispatch(setTempUri(null))
+dispatch(setTempUri(images))
+    router.push({
+        pathname:'imageView',
+        params:{sourceUri: typeof res === 'string' ? res : res.path}
+       })
+}
     // Function to add new images with loading
     const addImage = async () => {
         setOptionToggleClick(false)
@@ -77,6 +94,8 @@ const SelectedImages = () => {
         setLoadingMessage("Creating PDF in progress…");
         try {
             await makePdf(images);
+            dispatch(setTempUri(null))
+
             router.push({
                 pathname: '/',
                 params: { msg: 'PDF created successfully' },
@@ -111,10 +130,7 @@ setOptionToggleClick(false)
             <ScrollView contentContainerStyle={styles.imagesContainer}>
                 {images.map((res, index) => (
                     <View style={styles.imageView} key={index}>
-           <TouchableOpacity   style={styles.userImage}  onPress={()=>router.push({
-            pathname:'imageView',
-            params:{sourceUri: typeof res === 'string' ? res : res.path}
-           })}>
+           <TouchableOpacity   style={styles.userImage}  onPress={()=>saveImageUriBeforeRouteChange(res)}>
            <Image 
   style={styles.userImage} 
   source={{ uri: typeof res === 'string' ? res : res.path }} 

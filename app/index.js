@@ -12,6 +12,8 @@ import {
   ScrollView,
   ActivityIndicator,
   ToastAndroid,
+  Platform,
+  PermissionsAndroid
 } from 'react-native';
 import Navbar from '../src/components/Navbar';
 import Footer from '../src/components/Footer';
@@ -41,14 +43,29 @@ export default function Homepage() {
 
   const pdfOptions = useRef(new Animated.Value(0)).current;
   const [pdfMenuVisible, setPdfMenuVisible] = useState(false);
-
+  
+//intial fetch data
   useEffect(() => {
-   
+   const getPermission =async()=>{
+    if(Platform.Version<30){
+      const granted = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      ]);
+      const readGranted = granted['android.permission.READ_EXTERNAL_STORAGE'] === PermissionsAndroid.RESULTS.GRANTED;
+      const writeGranted = granted['android.permission.WRITE_EXTERNAL_STORAGE'] === PermissionsAndroid.RESULTS.GRANTED;
+    }
+   }
     const fetchData = async () => {
-      const pdfFiles = await getPdfFiles();
+      const hasPermission = await getPermission();
+      if (!hasPermission&&Platform.Version<30) {
+        await getPermission()
+      }else{
+        console.log('no need for permission for android 11+')
+      }
 
+      const pdfFiles = await getPdfFiles();
       const result = await getImageFiles();
-      console.log('hello from ')
       setPdfFilesInfo(pdfFiles);
       setImagesUri(result);
     };
@@ -100,9 +117,7 @@ export default function Homepage() {
   
         break;
       case 'Rename':
-       renamePdf(pdfUri)
-       ToastAndroid.show('PDF renamed successfully!',ToastAndroid.LONG)
-        
+  renamePdf(pdfUri)       
         break;
       default:
         break;
@@ -176,6 +191,7 @@ export default function Homepage() {
           )}
         </View>
       </TouchableWithoutFeedback>
+      
     </Provider>
   );
 }

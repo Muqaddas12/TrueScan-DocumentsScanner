@@ -15,13 +15,14 @@ import {
 import Icon from 'react-native-vector-icons/AntDesign';
 import Navbar from "../src/components/Navbar";
 import makePdf from "../src/helpers/makePdf";
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useDispatch,useSelector } from 'react-redux';
 import { setTempUri,clearTempUri } from '../src/redux/store';
 const { width, height } = Dimensions.get('window');
 
 const ScannedImagesContainer = () => {
  const dispatch=useDispatch()
+ let routeCheck=useLocalSearchParams().data
  const router = useRouter();
     const [Images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -95,19 +96,30 @@ ToastAndroid.show('Error selecting images: ' + error.message, ToastAndroid.LONG)
     // Function to initiate document scanning
     const handleAddImage = async () => {
        setOptionToggleClick(false)
-        const { scannedImages } = await DocumentScanner.scanDocument();
-        console.log(scannedImages.length,'from sacnned images')
+        const { scannedImages,status } = await DocumentScanner.scanDocument();
+   if(status==='cancel'&&Images.length===0){
+router.replace('/')
+   }
         if (scannedImages.length > 0) {
             setImages(prev => [...prev, ...scannedImages]);
         }
     };
 
     useEffect(() => {
+        
+        if(routeCheck){
+            dispatch(setTempUri(null))
+        }
+       
         if(imageUri){
             setImages(imageUri)
         }else{
+       
+            
             handleAddImage();
         }
+      
+        
     }, []);
 
         
@@ -140,8 +152,8 @@ dispatch(setTempUri(Images))
                 {Images.map((res, index) => (
                     <View style={styles.imageView} key={index}>
                             
-                                  <TouchableOpacity   style={styles.userImage}  onPress={()=>saveImageUriBeforeRouteChange(res)}>
-                                            <Image 
+                                  <TouchableOpacity accessibilityRole='checkbox' onPressOut={accessibilityRole}   style={styles.userImage}   onPress={()=>saveImageUriBeforeRouteChange(res)}>
+                                            <Image
                                    style={styles.userImage} 
                                    source={{ uri: typeof res === 'string' ? res : res.path }} 
                                  />
@@ -170,12 +182,13 @@ dispatch(setTempUri(Images))
               <TouchableOpacity style={styles.optionToggle} onPress={optionToggle}>
             
                 <View style={[styles.options, { position: 'absolute', bottom: 0, left: 0, right: 0 }]}>
+                <TouchableOpacity onPress={handleAddImage}>
+                    <Text style={styles.optionText}>Scan Documents</Text>
+                  </TouchableOpacity>
                   <TouchableOpacity onPress={addImage}>
                     <Text style={styles.optionText}>Gallery</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={handleAddImage}>
-                    <Text style={styles.optionText}>Scan Documents</Text>
-                  </TouchableOpacity>
+                 
             
               </View>
               </TouchableOpacity>

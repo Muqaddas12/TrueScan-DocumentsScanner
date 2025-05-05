@@ -25,7 +25,10 @@ router.push({
 
   const handleScanDocument=()=>{
     dispatch(notVisible())
-    router.push('scannedImages')
+    router.push({
+      pathname:'scannedImages',
+      params:{data:true}
+    })
   }
 
   return (

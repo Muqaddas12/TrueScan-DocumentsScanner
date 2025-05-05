@@ -9,7 +9,7 @@ const Navbar = () => {
         source={require('../images/headerLogo.png')} // Change path to your logo
         style={styles.logo}
       />
-      <Text style={styles.title}>DocScanner</Text>
+      <Text style={styles.title}>TrueScan</Text>
     </View>
   );
 };

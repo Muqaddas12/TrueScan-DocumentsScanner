@@ -161,13 +161,14 @@ setOptionToggleClick(false)
 {optionToggleClick && (
   <TouchableOpacity style={styles.optionToggle} onPress={optionToggle}>
 
+<TouchableOpacity onPress={handleAddImage}>
+        <Text style={styles.optionText}>Scan Documents</Text>
+      </TouchableOpacity>
     <View style={[styles.options, { position: 'absolute', bottom: 0, left: 0, right: 0 }]}>
       <TouchableOpacity onPress={addImage}>
         <Text style={styles.optionText}>Gallery</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={handleAddImage}>
-        <Text style={styles.optionText}>Scan Documents</Text>
-      </TouchableOpacity>
+     
 
   </View>
   </TouchableOpacity>

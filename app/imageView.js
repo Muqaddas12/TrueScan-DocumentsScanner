@@ -8,8 +8,6 @@ import {
   TouchableOpacity,
   Text,
   Alert,
-  PermissionsAndroid,
-  Platform,
   NativeModules
 } from "react-native";
 
@@ -21,32 +19,12 @@ const { width, height } = Dimensions.get("window");
 const ImageView = () => {
   const { sourceUri } = useLocalSearchParams();
 
-  // Requesting permission for Android to access storage
-  const requestPermission = async () => {
-    if (Platform.OS === "android" ) {
-      const granted = await PermissionsAndroid.requestMultiple([
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-      ]);
-      return (
-        granted["android.permission.READ_EXTERNAL_STORAGE"] ===
-          PermissionsAndroid.RESULTS.GRANTED &&
-        granted["android.permission.WRITE_EXTERNAL_STORAGE"] ===
-          PermissionsAndroid.RESULTS.GRANTED
-      );
-    }
-    return true; // for iOS or Android 13+ assume auto grant
-  };
+
 
   // Function to export and save image
   const exportAsImage = async () => {
     try {
-      const hasPermission = await requestPermission();
-      if (!hasPermission) {
-        Alert.alert("Permission denied", "Storage permission is required.");
-        return;
-      }
-  
+     
       const cleanedUri = sourceUri.replace("file://", "");
       const fileName = `TrueScan_${Date.now()}.jpg`;
   

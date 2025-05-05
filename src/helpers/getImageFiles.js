@@ -1,4 +1,4 @@
-import * as FileSystem from 'expo-file-system'
+
 import RNFS from 'react-native-fs'
 const getImageFiles=async ()=>{
     

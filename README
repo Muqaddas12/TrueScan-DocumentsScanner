@@ -1,21 +1,35 @@
 # 📄 Doc Scanner
 Note: Rename and Details is not working now i will work on later and some animation is required for smooth running otherwise application is running fine.
+A high-performance document scanning application that enables users to scan, convert, view, and share documents easily—all within a single mobile app.
 
-A robust **Document Scanner** built using **React Native** and **Expo Router**, designed to capture, process, and store documents efficiently. This application allows users to scan physical documents and convert them into digital copies and convert it into pdf
+🔧 Tech Stack:
+Frontend: React Native (cross-platform mobile development)
 
-## 📌 Features
+Libraries & Tools: React Native Image Picker, React Native PDF, HTML-to-PDF generator, Share API, File System access
 
-- 📷 **Document Scanning**: Capture images using the device's camera.
-- 🔎 **Image Processing**: Adjust contrast, brightness, and apply filters.
-- 🗂️ **Document Management**: Store and retrieve scanned documents.
-- 📤 **Export Options**: Share and save scanned files in PDF format.
-- 📱 **Cross-Platform**: Works on both Android and iOS.
+🌟 Key Features:
+📄 Document Scanning & PDF Conversion
+Scan documents using the device camera and convert captured images into high-quality, multi-page PDF files directly within the app.
 
-## 📚 Technologies Used
+🖼️ Image Import from Gallery
+Allows users to select one or multiple images from their gallery to compile and convert into a single PDF file—ideal for digitizing pre-captured documents.
 
-- **React Native**: Core framework for building mobile applications.
-- **Expo Router**: Navigation solution for handling page routing.
-- **Image Manipulation**: For enhancing document quality.
+📑 In-App PDF Viewer
+Built-in PDF viewer for instantly previewing scanned documents, ensuring users can verify the content before sharing or saving.
+
+📤 Seamless PDF Sharing
+Share scanned PDFs via email, WhatsApp, Google Drive, or other apps with just a tap, leveraging the device's native sharing options.
+
+📂 Efficient File Management
+Automatically organizes PDFs with timestamps and optional custom names, stored in the app's or device’s file system.
+
+⚡ Lightweight & Responsive UI
+Clean, intuitive, and responsive user interface designed for performance on both low- and high-end devices.
+
+🎯 Impact:
+Simplified the process of document digitization for students, professionals, and business users.
+
+Eliminated the need for bulky desktop scanners and PDF software by enabling portable document management on the go.
 
 
 ## 📦 Installation

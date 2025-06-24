@@ -152,7 +152,7 @@ dispatch(setTempUri(Images))
                 {Images.map((res, index) => (
                     <View style={styles.imageView} key={index}>
                             
-                                  <TouchableOpacity accessibilityRole='checkbox' onPressOut={accessibilityRole}   style={styles.userImage}   onPress={()=>saveImageUriBeforeRouteChange(res)}>
+                                  <TouchableOpacity   style={styles.userImage}   onPress={()=>saveImageUriBeforeRouteChange(res)}>
                                             <Image
                                    style={styles.userImage} 
                                    source={{ uri: typeof res === 'string' ? res : res.path }} 

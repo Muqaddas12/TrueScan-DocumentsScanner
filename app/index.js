@@ -13,7 +13,8 @@ import {
   ActivityIndicator,
   ToastAndroid,
   Platform,
-  PermissionsAndroid
+  PermissionsAndroid,
+  FlatList
 } from 'react-native';
 import Navbar from '../src/components/Navbar';
 import Footer from '../src/components/Footer';
@@ -28,9 +29,9 @@ import sharePdf from '../src/helpers/sharePdf';
 import renamePdf from '../src/helpers/renamePdf';
 import formatDate from '../src/helpers/formatDate';
 import { MaterialIcons, Feather } from '@expo/vector-icons'; 
-
+ import axios from 'axios';
 const { width, height } = Dimensions.get('screen');
-
+import EventSource from 'react-native-event-source';
 export default function Homepage() {
   const { msg } = useLocalSearchParams();
   const [imagesUri, setImagesUri] = useState([]);
@@ -54,6 +55,7 @@ export default function Homepage() {
       ]);
       const readGranted = granted['android.permission.READ_EXTERNAL_STORAGE'] === PermissionsAndroid.RESULTS.GRANTED;
       const writeGranted = granted['android.permission.WRITE_EXTERNAL_STORAGE'] === PermissionsAndroid.RESULTS.GRANTED;
+
     }
    }
     const fetchData = async () => {
@@ -142,27 +144,34 @@ export default function Homepage() {
 
           {showMsg ? <Text style={styles.successMessage}>{showMsg}</Text> : null}
 
-          <ScrollView contentContainerStyle={styles.pdfListContainer}>
-            {pdfFilesInfo.length > 0 ? (
-              pdfFilesInfo.map((pdf, index) => (
-                <View key={index}>
-                  <TouchableOpacity onPress={() => togglePdfMenu(pdf.name)} style={styles.pdfItem}>
-                    <Image source={{ uri: `file://${imagesUri[index]}` }} style={styles.pdfThumbnail} />
-                    <View style={styles.pdfDetailsContainer}>
-                      <Text style={styles.pdfTitle}>
-                        {pdf.name}
-                      </Text>
-                      <Text style={styles.pdfSize}>{(pdf.size / (1024 * 1024)).toFixed(2)} MB</Text>
-                      <Text style={styles.pdfDate}>{formatDate(pdf.modificationDate)}</Text>
-                      <Text style={styles.pdfPath}>{pdf.path.replace('/storage/emulated/0/','')}</Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              ))
-            ) : (
-              <Text style={styles.noPdfText}>No PDFs found</Text>
-            )}
-          </ScrollView>
+
+          <FlatList
+          style={styles.pdfListContainer}
+  data={pdfFilesInfo}
+  keyExtractor={(item) => item.key} 
+  renderItem={({ item }) => {
+    return(
+    
+    <TouchableOpacity onPress={() => togglePdfMenu(item.name)} style={styles.pdfItem}>
+    <Image
+  source={{
+    uri: `file:///storage/emulated/0/Download/TrueScan/.ImagesFiles/${item.name.replace('.pdf', '.png')}`
+  }}
+  style={styles.pdfThumbnail}
+/>
+
+      <View style={styles.pdfDetailsContainer}>
+        <Text style={styles.pdfTitle}>{item.name}</Text>
+        <Text style={styles.pdfSize}>{(item.size / (1024 * 1024)).toFixed(2)} MB</Text>
+        <Text style={styles.pdfDate}>{formatDate(item.modificationDate)}</Text>
+        <Text style={styles.pdfPath}>{item.path.replace('/storage/emulated/0/', '')}</Text>
+      </View>
+    </TouchableOpacity>
+  )
+  }}
+
+/>
+
 
           <View style={styles.footerWrapper}>
             <Footer />

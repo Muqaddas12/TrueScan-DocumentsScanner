@@ -10,15 +10,15 @@ const imageDirectory = `${RNFS.DownloadDirectoryPath}/TrueScan/.ImagesFiles/`
     //checking pdffiles dic exists or not
     if(!await RNFS.exists(imageDirectory)){
         await RNFS.mkdir(imageDirectory)
-        console.log('image dic created')
+  
        }
     if(!await RNFS.exists(desUri)){
 
         await RNFS.mkdir(desUri)
-        console.log('dic created')
+   
     }
     else{
-        console.log('dic exists')
+
     }
 
 
@@ -48,6 +48,7 @@ const imageDirectory = `${RNFS.DownloadDirectoryPath}/TrueScan/.ImagesFiles/`
         const options = {
             pages: resizedImages,
             outputPath: `${desUri}TrueScan_${date}.pdf`,
+            quality:5
         };
 
         const result = await createPdf(options);

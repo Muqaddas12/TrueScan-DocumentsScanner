@@ -17,13 +17,14 @@ const getPdfFiles = async () => {
 
     const pdfFiles = await RNFS.readDir(pdfDirectory);
    
-    const detailedPdfFiles = pdfFiles.map(pdfFile => ({
+    const detailedPdfFiles = pdfFiles.map((pdfFile,index )=> ({
       path: pdfFile.path,
       name: pdfFile.name,
       size: pdfFile.size,
       isFile: pdfFile.isFile(),
       isDirectory: pdfFile.isDirectory(),
       modificationDate: pdfFile.mtime,
+      key:index,
     }));
 
     return detailedPdfFiles;

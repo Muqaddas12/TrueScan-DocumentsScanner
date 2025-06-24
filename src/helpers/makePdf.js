@@ -23,8 +23,8 @@ const imageDirectory = `${RNFS.DownloadDirectoryPath}/TrueScan/.ImagesFiles/`
 
 
 
-    const A4_WIDTH = 2480;
-    const A4_HEIGHT = 3508;
+    const A4_WIDTH = 720;
+    const A4_HEIGHT = 1280;
 
     try {
         // Normalize image paths from mixed objects and strings
@@ -48,7 +48,7 @@ const imageDirectory = `${RNFS.DownloadDirectoryPath}/TrueScan/.ImagesFiles/`
         const options = {
             pages: resizedImages,
             outputPath: `${desUri}TrueScan_${date}.pdf`,
-            quality:5
+            quality:1
         };
 
         const result = await createPdf(options);

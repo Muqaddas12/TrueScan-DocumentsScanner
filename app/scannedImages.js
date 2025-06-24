@@ -12,15 +12,18 @@ import {
     ActivityIndicator, 
     ToastAndroid
 } from "react-native";
+import ImageResizer from 'react-native-image-resizer';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Navbar from "../src/components/Navbar";
 import makePdf from "../src/helpers/makePdf";
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useDispatch,useSelector } from 'react-redux';
 import { setTempUri,clearTempUri } from '../src/redux/store';
+import RNFS from 'react-native-fs';
 const { width, height } = Dimensions.get('window');
 
 const ScannedImagesContainer = () => {
+    const MAX_IMAGE_SIZE_MB = 3;
  const dispatch=useDispatch()
  let routeCheck=useLocalSearchParams().data
  const router = useRouter();
@@ -49,11 +52,70 @@ const ScannedImagesContainer = () => {
             ToastAndroid.show('Please scan or select image at least one image ',ToastAndroid.LONG)
             return;
         } 
+    // *****************************************************************************************************
+   const MAX_IMAGE_SIZE_MB = 1;
+
+const compressImage = async (imagePath) => {
+  try {
+    return await compressImageRecursive(imagePath, 20);
+  } catch (err) {
+    console.error("Image compression error:", err);
+    return null;
+  }
+};
+
+const compressImageRecursive = async (imagePath, quality) => {
+  if (quality < 10) {
+    console.warn("Minimum quality reached, still too large.");
+    return null;
+  }
+
+  const resizedImage = await ImageResizer.createResizedImage(
+    imagePath,
+    720, // width
+    1280, // height
+    'JPEG',
+    quality,
+    0
+  );
+
+  const fileInfo = await RNFS.stat(resizedImage.uri);
+  const fileSizeMB = fileInfo.size / (1024 * 1024);
+  console.log(`Quality ${quality} → Size ${fileSizeMB.toFixed(2)} MB`);
+
+  if (fileSizeMB <= MAX_IMAGE_SIZE_MB) {
+    return resizedImage.uri;
+  } else {
+    // Recurse using resized image's path
+    return await compressImageRecursive(resizedImage.uri, quality - 10);
+  }
+};
+
+const compressImages = async (imagePaths) => {
+  const compressedImages = [];
+
+  for (let path of imagePaths) {
+    const cleanedPath = path.replace('file://', '');
+    const compressed = await compressImage(cleanedPath);
+    if (compressed) {
+      compressedImages.push(compressed);
+    }
+  }
+
+  return compressedImages;
+};
+
+
+    // *****************************************************************************************************
+
 
         setLoading(true);
         setLoadingMessage("Creating PDF in progress…");
         try {
-            await makePdf(Images);
+           const result= await compressImages(Images)
+
+            console.log(Images)
+            await makePdf(result);
            dispatch(setTempUri(null))
 
             router.push({

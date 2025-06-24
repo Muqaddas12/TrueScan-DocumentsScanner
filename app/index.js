@@ -29,9 +29,9 @@ import sharePdf from '../src/helpers/sharePdf';
 import renamePdf from '../src/helpers/renamePdf';
 import formatDate from '../src/helpers/formatDate';
 import { MaterialIcons, Feather } from '@expo/vector-icons'; 
- import axios from 'axios';
+
 const { width, height } = Dimensions.get('screen');
-import EventSource from 'react-native-event-source';
+
 export default function Homepage() {
   const { msg } = useLocalSearchParams();
   const [imagesUri, setImagesUri] = useState([]);

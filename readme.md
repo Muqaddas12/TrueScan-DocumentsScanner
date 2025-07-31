@@ -79,5 +79,5 @@ This project is licensed under the **MIT License**.
 
 ---
 
-💌 **Have questions?** Reach out via Email:admin@mtbyown.com
+💌 **Have questions?** Reach out via Email:muqaddasmalik781@gmail.com
 

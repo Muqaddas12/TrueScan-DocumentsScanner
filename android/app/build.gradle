@@ -91,9 +91,9 @@ android {
     defaultConfig {
         applicationId "com.mmbyown.truescandocumentscanner"
         minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 6
-        versionName "1.3.3"
+        targetSdkVersion 36
+        versionCode 7
+        versionName "1.4.0"
     }
     signingConfigs {
         debug {
